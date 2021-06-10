@@ -8,7 +8,7 @@ class DB
      */
     private $host = 'localhost:3306';
     private $user = 'root';
-    private $pass = 'Abolkuka2014';
+    private $pass = '****';
     private $dbName = 'rally';
     private $myConnection;
     private $setDbColation = "SET NAMES utf8";
