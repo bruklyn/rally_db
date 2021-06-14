@@ -32,11 +32,16 @@ class DB_queries extends DB
     // inset data to db
     public function setSponsorToDb($name, $url, $logo, $notes){
         $query = "insert into sponsors (`name`, url, logo, notes) values ('{$name}', '{$url}', '{$logo}', '{$notes}')";
-        return $this->insertQuery($query);
+        return $this->insertQueryGetId($query);
     }
 
     public function setCompetitionToDb($name, $location, $from, $to){
         $query = "insert into competitions (`name`, location, `from`, `to`) values ('{$name}', '{$location}', '{$from}', '{$to}')";
+        return $this->insertQuery($query);
+    }
+
+    public function setMapping($id_competition, $id_sponsor){
+        $query = "insert into sponsor_competition_maping (competition_id, sponsor_id) values({$id_competition}, {$id_sponsor})";
         return $this->insertQuery($query);
     }
 

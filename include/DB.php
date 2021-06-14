@@ -75,6 +75,17 @@ class DB
         return $affected;
     }
 
+    function insertQueryGetId($insertQuery){
+        $link = $this->setUpConnection();
+        mysqli_query($link, $this->setDbColation);
+        $query = "{$insertQuery}";
+        if(mysqli_query($link, $query)){
+            return mysqli_insert_id($link);
+        }else
+            $this->closeDb($link);
+            return -1;
+    }
+
     /**
      * Default function to update data in database
      * @param $updateQuery - sql update query to execute

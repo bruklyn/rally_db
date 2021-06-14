@@ -5,30 +5,43 @@ require_once "include/DB_queries.php";
 # set new db query instance
 $db_queries = new DB_queries();
 
+$available_competitions = $db_queries->getAllCompetitions();
+
 $message = "";
 $OK_message = "";
 if (isset($_POST['submit-button-sponsor'])) {
     $sponsor_name = $_POST['sponsorName'];
     $sponsor_url = $_POST['sponsorURL'];
     $sponsor_notes = $_POST['sponsorNotes'];
+    $competitions = $_POST['sonsorForCompetiton'];
     if($_FILES["sponsorLogo"]["error"] > 0){
         $message .= "Return Code: " . $_FILES["sponsorLogo"]["error"] . "<br />";
     }
     else
     {
-        if (file_exists("include/" . $_FILES["sponsorLogo"]["name"]))
+        if (file_exists("images/" . $_FILES["sponsorLogo"]["name"]))
         {
             $message .= $_FILES["sponsorLogo"]["name"] . " already exists. <br/>";
         }
         else
         {
             move_uploaded_file($_FILES["sponsorLogo"]["tmp_name"],
-                "include/" . $_FILES["sponsorLogo"]["name"]);
-            $message .= "Stored in: " . "include/" . $_FILES["sponsorLogo"]["name"] . "<br/>";
+                "images/" . $_FILES["sponsorLogo"]["name"]);
+            $OK_message .= "Stored in: " . "images/" . $_FILES["sponsorLogo"]["name"] . "<br/>";
 
             $result =  $db_queries->setSponsorToDb($sponsor_name, $sponsor_url, $_FILES["sponsorLogo"]["name"], $sponsor_notes);
             if($result > 0){
-                $OK_message = "Success!";
+                $OK_message .= "Success!<br/>";
+                // set mapping
+                foreach ($competitions as $competition_id){
+                    $res = $db_queries->setMapping($competition_id, $result);
+                    if($res > 0 ){
+                        $OK_message .= "Sponsors pievienots sacensibam <br/>";
+                    }else{
+                        $message .= "Sponsor maping FAILED!!!";
+                    }
+                }
+
             }else {
                 $message .= "INSERT FAILED!!!";
             }
@@ -49,16 +62,11 @@ if (isset($_POST['submit-button-competition'])) {
     }else{
         $result =  $db_queries->setCompetitionToDb($competition_name, $competition_location, $competition_start, $competition_end);
         if($result > 0){
-            $OK_message = "Success! ";
+            $OK_message .= "Success! ";
         }else {
             $message .= "INSERT FAILED!!! " . $result;
         }
     }
-
-
-
-
-
 }
 
 ?>
@@ -103,7 +111,7 @@ if(strlen($OK_message) > 0){
             </div>
             <div class="form-group">
                 <label for="sponsorURL">Sponsora majas lapas adrese</label>
-                <input type="url" maxlength="150" class="form-control" id="sponsorURL" name="sponsorURL" placeholder="http:\\www.sponsor.com" required>
+                <input type="url" maxlength="150" class="form-control" id="sponsorURL" name="sponsorURL" placeholder="http://www.sponsor.com" required>
             </div>
 
             <div class="form-group">
@@ -115,6 +123,16 @@ if(strlen($OK_message) > 0){
                 <label for="sponsorLogo">Sponsora logo</label>
                 <input type="file" class="form-control-file" id="sponsorLogo" name="sponsorLogo" required>
             </div>
+
+            <div class="form-group">
+                <label for="sonsorForCompetiton">Pievienot sponsoru sacensībām</label>
+                <select multiple class="form-control" id="sonsorForCompetiton" name="sonsorForCompetiton[]">
+                    <?php foreach ($available_competitions as $comp) {?>
+                    <option value="<?php echo $comp['id'] ?>">"<?php echo $comp['name'] ?>"</option>
+                    <?php }?>
+                </select>
+            </div>
+
             <button name="submit-button-sponsor" type="submit" class="btn btn-primary mt-3">Saglabāt</button>
         </form>
     </div>
