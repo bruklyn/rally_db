@@ -6,6 +6,7 @@ require_once "include/DB_queries.php";
 $db_queries = new DB_queries();
 
 $available_competitions = $db_queries->getAllCompetitions();
+$available_sponsors = $db_queries->getAllSponsors();
 
 $message = "";
 $OK_message = "";
@@ -55,14 +56,25 @@ if (isset($_POST['submit-button-competition'])) {
     $competition_start = $_POST['competitionStart'];
     $competition_end = $_POST['competitionEnd'];
 
-    echo $competition_start;
+    $sponsor_list = $_POST['competitonSponsors'];
 
     if($competition_start > $competition_end){
         $message .= "Competition start date cannot be higher than end date";
     }else{
         $result =  $db_queries->setCompetitionToDb($competition_name, $competition_location, $competition_start, $competition_end);
         if($result > 0){
-            $OK_message .= "Success! ";
+            $OK_message .= "Success!<br/> ";
+
+            // set mapping
+            foreach ($sponsor_list as $sponsor_id){
+                $res = $db_queries->setMapping($result, $sponsor_id);
+                if($res > 0 ){
+                    $OK_message .= "Sponsors pievienots sacensibam <br/>";
+                }else{
+                    $message .= "Sponsor maping FAILED!!!";
+                }
+            }
+
         }else {
             $message .= "INSERT FAILED!!! " . $result;
         }
@@ -161,6 +173,16 @@ if(strlen($OK_message) > 0){
                 <label for="competitionEnd">Norisinās līdz</label>
                 <input class="form-control" type="date" id="competitionEnd" name="competitionEnd" value="2021-01-01">
             </div>
+
+            <div class="form-group">
+                <label for="competitonSponsors">Pievienot sponsoru sacensībām</label>
+                <select multiple class="form-control" id="competitonSponsors" name="competitonSponsors[]">
+                    <?php foreach ($available_sponsors as $sponsor) {?>
+                        <option value="<?php echo $sponsor['id'] ?>">"<?php echo $sponsor['name'] ?>"</option>
+                    <?php }?>
+                </select>
+            </div>
+
             <button name="submit-button-competition" type="submit" class="btn btn-primary mt-3">Saglabāt</button>
         </form>
     </div>

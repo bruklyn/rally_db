@@ -75,6 +75,11 @@ class DB
         return $affected;
     }
 
+    /**
+     * Custom function to insert data to database
+     * @param $insertQuery - sql insert query to execute
+     * @return int - inserted row id
+     */
     function insertQueryGetId($insertQuery){
         $link = $this->setUpConnection();
         mysqli_query($link, $this->setDbColation);

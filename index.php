@@ -6,8 +6,8 @@ require_once "include/DB_queries.php";
 $db_queries = new DB_queries();
 # fetch competition years
 $years = mysqli_fetch_all($db_queries->getCompetitionYears());
-
 ?>
+
 <!DOCTYPE html>
 <html lang="lv">
 <head>
@@ -16,6 +16,7 @@ $years = mysqli_fetch_all($db_queries->getCompetitionYears());
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 </head>
 <body>
+
 <nav class="nav">
     <a class="nav-link active" href="#">Sākums</a>
     <a class="nav-link " href="forms.php">Datu ievade</a>
@@ -61,8 +62,6 @@ foreach ($years as $year){
     </div>
 </div>
 <?php }?>
-
-
 </body>
 </html>
 

@@ -8,6 +8,11 @@ class DB_queries extends DB
         return $this->selectQuery($query);
     }
 
+    public function getAllSponsors(){
+        $query = "select * from sponsors";
+        return $this->selectQuery($query);
+    }
+
     public function getCompetitionYears(){
         $query = "select distinct YEAR(`from`) from competitions order by `from` desc";
         return $this->selectQuery($query);
@@ -37,7 +42,7 @@ class DB_queries extends DB
 
     public function setCompetitionToDb($name, $location, $from, $to){
         $query = "insert into competitions (`name`, location, `from`, `to`) values ('{$name}', '{$location}', '{$from}', '{$to}')";
-        return $this->insertQuery($query);
+        return $this->insertQueryGetId($query);
     }
 
     public function setMapping($id_competition, $id_sponsor){
